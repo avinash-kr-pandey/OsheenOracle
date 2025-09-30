@@ -1,4 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Charm:wght@400;700&family=Cormorant:wght@400;700&family=Montserrat:wght@400;700&display=swap');
 @import "tailwindcss";
+
+:root {
+  --font-charm: 'Charm', sans-serif;
+  --font-cormorant: 'Cormorant', serif;
+  --font-montserrat: 'Montserrat', sans-serif;
+}
 
 /* Root variables (light mode defaults) */
 :root {
@@ -47,24 +54,4 @@ section {
   padding-inline: var(--spacing-container);
 }
 
-/* Headings */
-h1 {
-  font-family: var(--font-heading);
-  @apply text-4xl md:text-5xl lg:text-6xl font-bold mb-6;
-}
 
-h2 {
-  font-family: var(--font-subheading);
-  @apply text-3xl md:text-4xl font-semibold mb-4;
-}
-
-p {
-  font-family: var(--font-body);
-  @apply text-lg leading-relaxed mb-4;
-}
-
-/* Buttons */
-.btn {
-  font-family: var(--font-body);
-  @apply bg-yellow-300 hover:bg-yellow-400 text-black font-semibold px-6 py-3 rounded-lg transition;
-}

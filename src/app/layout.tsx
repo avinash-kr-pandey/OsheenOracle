@@ -38,10 +38,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${charm.variable} ${cormorant.variable} ${montserrat.variable} antialiased`}
+        className={`${charm.variable} ${cormorant.variable} ${montserrat.variable} antialiased `}
       >
-        <div className="min-h-screen flex flex-col">
-          <HeroHeader />
+        <div className="min-h-screen flex flex-col ">
+          <HeroHeader  />
           <main className="flex-1 container">{children}</main>
           <Footer />
         </div>
