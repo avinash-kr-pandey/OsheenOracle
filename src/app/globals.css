@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Charm:wght@400;700&family=Cormorant:wght@400;700&family=Montserrat:wght@400;700&display=swap');
 @import "tailwindcss";
 
+/* Fonts */
 :root {
   --font-charm: 'Charm', sans-serif;
   --font-cormorant: 'Cormorant', serif;
@@ -9,10 +10,10 @@
 
 /* Root variables (light mode defaults) */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #D8FBFF;   /* custom background */
+  --foreground: #3D2E4F;   /* custom text color */
 
-  /* Fonts from next/font/google */
+  /* Fonts */
   --font-heading: var(--font-charm);
   --font-subheading: var(--font-cormorant);
   --font-body: var(--font-montserrat);
@@ -22,11 +23,11 @@
   --spacing-container: 1.5rem; /* default padding for container */
 }
 
-/* Dark mode (if needed, you can invert later) */
+/* Dark mode (if needed) */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #171717;
-    --foreground: #ffffff;
+    --background: #FBB5E7;
+    --foreground: #D8FBFF;
   }
 }
 
@@ -54,4 +55,8 @@ section {
   padding-inline: var(--spacing-container);
 }
 
-
+/* Text Selection Styling */
+::selection {
+  background: #03d0e7;  /* highlight bg */
+  color: #3D2E4F;       /* text color when selected */
+}
