@@ -1,3 +1,4 @@
+import Discover from "@/components/Home/Discover";
 import HeroSection from "@/components/Home/HeroSection";
 import WelcomeOsheenOracle from "@/components/Home/WelcomeOsheenOracle";
 import WhyChooseUs from "@/components/Home/WhyChooseUs";
@@ -11,6 +12,7 @@ export default function Home() {
       </header>
       <WelcomeOsheenOracle />
       <WhyChooseUs />
+      <Discover />
     </>
   );
 }

@@ -26,15 +26,17 @@ const WhyChooseUs = () => {
     },
   ];
 
-  // duplicate cards for infinite loop
-  const visibleCards = 4;
+  // Always show 2.5 cards
+  const visibleCards = 2.5;
+
+  // extend cards for infinite loop
   const extendedCards = [
-    ...cards.slice(-visibleCards),
+    ...cards.slice(-Math.ceil(visibleCards)),
     ...cards,
-    ...cards.slice(0, visibleCards),
+    ...cards.slice(0, Math.ceil(visibleCards)),
   ];
 
-  const [currentIndex, setCurrentIndex] = useState(visibleCards);
+  const [currentIndex, setCurrentIndex] = useState(Math.ceil(visibleCards));
   const [isTransitioning, setIsTransitioning] = useState(true);
   const transitionRef = useRef<HTMLDivElement>(null);
 
@@ -47,17 +49,17 @@ const WhyChooseUs = () => {
     setIsTransitioning(true);
   };
 
-  // reset when reach clones
+  // reset when reaching clones
   useEffect(() => {
     if (currentIndex === 0) {
       setTimeout(() => {
         setIsTransitioning(false);
         setCurrentIndex(cards.length);
       }, 700);
-    } else if (currentIndex === cards.length + visibleCards) {
+    } else if (currentIndex === cards.length + Math.ceil(visibleCards)) {
       setTimeout(() => {
         setIsTransitioning(false);
-        setCurrentIndex(visibleCards);
+        setCurrentIndex(Math.ceil(visibleCards));
       }, 700);
     } else {
       setIsTransitioning(true);
@@ -66,15 +68,13 @@ const WhyChooseUs = () => {
 
   return (
     <div
-      className="w-full py-16 max-w-7xl mx-auto  relative overflow-hidden"
+      className="w-full py-16 max-w-7xl mx-auto relative overflow-hidden"
       style={{ fontFamily: "var(--font-montserrat)" }}
     >
       <div className="absolute inset-0 opacity-40 bg-[url('/assets/Shape.png')] bg-no-repeat bg-left-top bg-contain pointer-events-none"></div>
-      {/* Background Gradient */}
-      <div className="absolute inset-0 shadow-xl rounded-3xl -z-10" />
 
       {/* Header Section */}
-      <div className="flex justify-between items-start mb-10">
+      <div className="flex justify-between items-start mb-10 px-4 md:px-0">
         <div>
           <p className="text-sm font-semibold text-gray-500 tracking-wider uppercase">
             WHY CHOOSE US
@@ -83,6 +83,7 @@ const WhyChooseUs = () => {
             Discover Your Path in the Stars with Us
           </h2>
         </div>
+
         {/* Arrows */}
         <div className="flex gap-3">
           <button
@@ -101,35 +102,35 @@ const WhyChooseUs = () => {
       </div>
 
       {/* Slider Container */}
-      <div className="overflow-hidden">
-        <div
-          ref={transitionRef}
-          className={`flex ${
-            isTransitioning
-              ? "transition-transform duration-700 ease-in-out"
-              : ""
-          }`}
-          style={{
-            transform: `translateX(-${currentIndex * (100 / visibleCards)}%)`,
-            width: `${(extendedCards.length / visibleCards) * 100}%`,
-          }}
-        >
-          {extendedCards.map((card, index) => (
-            <div key={index} className="w-1/9 flex-shrink-0">
-              <div className="p-6 w-[25vw] border rounded-xl shadow-sm bg-white hover:shadow-md transition h-full">
-                <div className="flex justify-center mb-4">
-                  <div className="w-10 h-10 bg-gradient-to-b from-blue-200 to-green-200 rounded-full" />
-                </div>
-                <h3 className="text-lg font-bold text-center text-gray-800 mb-2">
-                  {card.title}
-                </h3>
-                <p className="text-sm text-gray-600 text-center leading-relaxed">
-                  {card.desc}
-                </p>
+      <div
+        ref={transitionRef}
+        className={`flex ${
+          isTransitioning ? "transition-transform duration-700 ease-in-out" : ""
+        }`}
+        style={{
+          transform: `translateX(-${currentIndex * 30}vw)`, // 👈 card width ke hisaab se slide hoga
+          width: `${extendedCards.length * 30}vw`, // 👈 total width = cards × card width
+        }}
+      >
+        {extendedCards.map((card, index) => (
+          <div
+            key={index}
+            className="flex-shrink-0 px-3"
+            style={{ width: "30vw" }} // 👈 fixed card width
+          >
+            <div className="p-6 border rounded-xl shadow-sm bg-white hover:shadow-md transition h-full">
+              <div className="flex justify-center mb-4">
+                <div className="w-10 h-10 bg-gradient-to-b from-blue-200 to-green-200 rounded-full" />
               </div>
+              <h3 className="text-lg font-bold text-center text-gray-800 mb-2">
+                {card.title}
+              </h3>
+              <p className="text-sm text-gray-600 text-center leading-relaxed">
+                {card.desc}
+              </p>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     </div>
   );
