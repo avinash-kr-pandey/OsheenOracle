@@ -26,75 +26,111 @@ const WhyChooseUs = () => {
     },
   ];
 
-  // Always show 2.5 cards
-  const visibleCards = 2.5;
-
-  // extend cards for infinite loop
-  const extendedCards = [
-    ...cards.slice(-Math.ceil(visibleCards)),
-    ...cards,
-    ...cards.slice(0, Math.ceil(visibleCards)),
-  ];
-
-  const [currentIndex, setCurrentIndex] = useState(Math.ceil(visibleCards));
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [cardsPerView, setCardsPerView] = useState(3);
   const [isTransitioning, setIsTransitioning] = useState(true);
   const transitionRef = useRef<HTMLDivElement>(null);
 
+  // Calculate cards per view based on screen size
+  useEffect(() => {
+    const updateCardsPerView = () => {
+      if (window.innerWidth >= 1280) {
+        // xl screens
+        setCardsPerView(3);
+      } else if (window.innerWidth >= 1024) {
+        // lg screens
+        setCardsPerView(2.5);
+      } else if (window.innerWidth >= 768) {
+        // md screens
+        setCardsPerView(2);
+      } else {
+        // sm screens
+        setCardsPerView(1);
+      }
+    };
+
+    updateCardsPerView();
+    window.addEventListener("resize", updateCardsPerView);
+    return () => window.removeEventListener("resize", updateCardsPerView);
+  }, []);
+
+  // Extend cards for infinite loop
+  const extendedCards = [
+    ...cards.slice(-Math.ceil(cardsPerView)),
+    ...cards,
+    ...cards.slice(0, Math.ceil(cardsPerView)),
+  ];
+
+  const totalCards = cards.length;
+
   const handleSlide = (direction: "left" | "right") => {
+    setIsTransitioning(true);
+
     if (direction === "left") {
       setCurrentIndex((prev) => prev - 1);
     } else {
       setCurrentIndex((prev) => prev + 1);
     }
-    setIsTransitioning(true);
   };
 
-  // reset when reaching clones
+  // Reset when reaching clones for infinite loop
   useEffect(() => {
-    if (currentIndex === 0) {
+    if (currentIndex < 0) {
       setTimeout(() => {
         setIsTransitioning(false);
-        setCurrentIndex(cards.length);
+        setCurrentIndex(totalCards - 1);
       }, 700);
-    } else if (currentIndex === cards.length + Math.ceil(visibleCards)) {
+    } else if (currentIndex >= totalCards) {
       setTimeout(() => {
         setIsTransitioning(false);
-        setCurrentIndex(Math.ceil(visibleCards));
+        setCurrentIndex(0);
       }, 700);
-    } else {
-      setIsTransitioning(true);
     }
-  }, [currentIndex, cards.length]);
+  }, [currentIndex, totalCards]);
+
+  // Calculate card width based on cards per view
+  const getCardWidth = () => {
+    if (cardsPerView === 1) return "100%";
+    if (cardsPerView === 2) return "50%";
+    if (cardsPerView === 2.5) return "40%"; // 2.5 cards = 40% each (100%/2.5)
+    if (cardsPerView === 3) return "33.333%";
+    return "100%";
+  };
+
+  const cardWidth = getCardWidth();
+  const gap = "1rem"; // 16px gap between cards
 
   return (
     <div
-      className="w-full py-16 max-w-7xl mx-auto relative overflow-hidden"
+      className="w-full py-8 md:py-12 lg:py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto relative overflow-hidden"
       style={{ fontFamily: "var(--font-montserrat)" }}
     >
       <div className="absolute inset-0 opacity-40 bg-[url('/assets/Shape.png')] bg-no-repeat bg-left-top bg-contain pointer-events-none"></div>
 
       {/* Header Section */}
-      <div className="flex justify-between items-start mb-10 px-4 md:px-0">
-        <div>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 md:mb-10 lg:mb-12">
+        <div className="mb-6 sm:mb-0">
           <p className="text-sm font-semibold text-gray-500 tracking-wider uppercase">
             WHY CHOOSE US
           </p>
-          <h2 className="text-2xl md:text-3xl font-serif italic font-semibold text-gray-900 mt-2 max-w-lg">
+          <h2 className="text-2xl md:text-3xl lg:text-5xl text-purple-900 mt-2 max-w-lg whitespace-nowrap">
             Discover Your Path in the Stars with Us
           </h2>
         </div>
 
         {/* Arrows */}
-        <div className="flex gap-3">
+        <div className="flex gap-3 self-end sm:self-auto">
           <button
             onClick={() => handleSlide("left")}
-            className="w-10 h-10 flex items-center justify-center rounded-full border bg-white shadow hover:bg-gray-100 transition"
+            className="w-10 h-10 flex items-center justify-center rounded-full border bg-white shadow hover:bg-gray-100 transition-all duration-300 hover:scale-105"
+            aria-label="Previous slide"
           >
             <FaArrowLeft className="text-yellow-500" />
           </button>
           <button
             onClick={() => handleSlide("right")}
-            className="w-10 h-10 flex items-center justify-center rounded-full border bg-white shadow hover:bg-gray-100 transition"
+            className="w-10 h-10 flex items-center justify-center rounded-full border bg-white shadow hover:bg-gray-100 transition-all duration-300 hover:scale-105"
+            aria-label="Next slide"
           >
             <FaArrowRight className="text-yellow-500" />
           </button>
@@ -102,35 +138,44 @@ const WhyChooseUs = () => {
       </div>
 
       {/* Slider Container */}
-      <div
-        ref={transitionRef}
-        className={`flex ${
-          isTransitioning ? "transition-transform duration-700 ease-in-out" : ""
-        }`}
-        style={{
-          transform: `translateX(-${currentIndex * 30}vw)`, // 👈 card width ke hisaab se slide hoga
-          width: `${extendedCards.length * 30}vw`, // 👈 total width = cards × card width
-        }}
-      >
-        {extendedCards.map((card, index) => (
-          <div
-            key={index}
-            className="flex-shrink-0 px-3"
-            style={{ width: "30vw" }} // 👈 fixed card width
-          >
-            <div className="p-6 border rounded-xl shadow-sm bg-white hover:shadow-md transition h-full">
-              <div className="flex justify-center mb-4">
-                <div className="w-10 h-10 bg-gradient-to-b from-blue-200 to-green-200 rounded-full" />
+      <div className="relative">
+        <div
+          ref={transitionRef}
+          className={`flex ${
+            isTransitioning
+              ? "transition-transform duration-700 ease-in-out"
+              : ""
+          }`}
+          style={{
+            transform: `translateX(calc(-${currentIndex * 100}% - ${
+              currentIndex * 1
+            }rem))`,
+            gap: gap,
+          }}
+        >
+          {extendedCards.map((card, index) => (
+            <div
+              key={index}
+              className="flex-shrink-0"
+              style={{
+                width: `calc(${cardWidth} - ${gap})`,
+                minWidth: `calc(${cardWidth} - ${gap})`,
+              }}
+            >
+              <div className="p-4 sm:p-6 border rounded-xl shadow-sm bg-white hover:shadow-lg transition-all duration-300 h-full hover:scale-105 group">
+                <div className="flex justify-center mb-4">
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-200 to-green-200 rounded-full group-hover:from-blue-300 group-hover:to-green-300 transition-colors duration-300" />
+                </div>
+                <h3 className="text-lg sm:text-xl font-bold text-center text-gray-800 mb-3 group-hover:text-gray-900 transition-colors">
+                  {card.title}
+                </h3>
+                <p className="text-sm sm:text-base text-gray-600 text-center leading-relaxed group-hover:text-gray-700 transition-colors">
+                  {card.desc}
+                </p>
               </div>
-              <h3 className="text-lg font-bold text-center text-gray-800 mb-2">
-                {card.title}
-              </h3>
-              <p className="text-sm text-gray-600 text-center leading-relaxed">
-                {card.desc}
-              </p>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
