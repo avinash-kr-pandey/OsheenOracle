@@ -1,30 +1,26 @@
 import type { Metadata } from "next";
 import { Charm, Cormorant, Montserrat } from "next/font/google";
 import "./globals.css";
-import HeroHeader from "@/components/Hero/HeroHeader";
-import Footer from "@/components/Footer/Footer";
+import LayoutWrapper from "./LayoutWrapper";
 
-// Heading (Main)
+// Fonts
 const charm = Charm({
   variable: "--font-charm",
   subsets: ["latin"],
   weight: ["400", "700"],
 });
-
-// Subheading
 const cormorant = Cormorant({
   variable: "--font-cormorant",
   subsets: ["latin"],
   weight: ["400", "500", "700"],
 });
-
-// Body / Buttons
 const montserrat = Montserrat({
   variable: "--font-montserrat",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
 
+// Metadata
 export const metadata: Metadata = {
   title: "Osheen Oracle",
   description: "Let The Healing Begin",
@@ -38,15 +34,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${charm.variable} ${cormorant.variable} ${montserrat.variable} antialiased `}
+        className={`${charm.variable} ${cormorant.variable} ${montserrat.variable} antialiased`}
       >
-        <div className="min-h-screen flex flex-col ">
-          <HeroHeader />
-          <main className="flex-1 container pt-[96px] md:pt-[110px] ">
-            {children}
-          </main>
-          <Footer />
-        </div>
+        {/* Use client wrapper to handle pathname */}
+        <LayoutWrapper>{children}</LayoutWrapper>
       </body>
     </html>
   );
