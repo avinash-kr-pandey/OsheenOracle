@@ -36,7 +36,7 @@ const AuthPage = () => {
       </div>
 
       <div
-        className="flex-1 flex items-center justify-center px-4 sm:px-6"
+        className="flex-1 flex items-center justify-center md:px-4 px-2 md:py-0 py-5"
         style={{ fontFamily: "var(--font-montserrat)" }}
       >
         <div className="flex flex-col md:flex-row w-full max-w-7xl gap-6 md:gap-10">
