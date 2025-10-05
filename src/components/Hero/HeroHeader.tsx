@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 
 const navLinks = [
@@ -15,6 +16,7 @@ const navLinks = [
 export default function HeroHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const router = useRouter();
 
   // Detect scroll
   useEffect(() => {
@@ -39,7 +41,9 @@ export default function HeroHeader() {
       >
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
           {/* Logo */}
-          <div className="flex items-center">
+          <div className="flex items-center cursor-pointer"
+            onClick={() => router.push("/")}
+          >
             <Image
               width={scrolled ? 70 : 90}
               height={scrolled ? 70 : 90}
