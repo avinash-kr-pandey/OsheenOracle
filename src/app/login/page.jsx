@@ -40,8 +40,8 @@ const AuthPage = () => {
         style={{ fontFamily: "var(--font-montserrat)" }}
       >
         <div className="flex flex-col md:flex-row w-full max-w-7xl gap-6 md:gap-10">
-          {/* Welcome Message */}
-          <div className="order-1 md:order-2 w-full md:w-2/3 flex flex-col items-center justify-center relative p-6 sm:p-10">
+          {/* Welcome Message (LEFT SIDE now) */}
+          <div className="order-1 w-full md:w-2/3 flex flex-col items-center justify-center relative p-6 sm:p-10">
             <Image
               src="/images/roundimage.png"
               alt="Zodiac Wheel"
@@ -49,13 +49,13 @@ const AuthPage = () => {
               width={600}
               height={600}
             />
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-purple-700 text-center z-10 font-bold leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-purple-700 text-center md:text-left z-10 font-bold leading-tight">
               Welcome to <br /> Osheen Oracle
             </h1>
           </div>
 
-          {/* Auth Form */}
-          <div className="order-2 md:order-1 w-full md:w-1/3 bg-white bg-opacity-90 p-6 sm:p-10 flex flex-col justify-center rounded-lg shadow-2xl">
+          {/* Auth Form (RIGHT SIDE now) */}
+          <div className="order-2 w-full md:w-1/3 bg-white bg-opacity-90 p-6 sm:p-10 flex flex-col justify-center rounded-lg shadow-2xl">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-900 mb-6 text-center md:text-left">
               {isRegister ? "Register" : "Login"}
             </h2>
