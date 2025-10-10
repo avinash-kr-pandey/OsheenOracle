@@ -36,12 +36,13 @@ export default function HeroHeader() {
   return (
     <div>
       <header
-        className={`fixed top-0 left-0 w-full z-50 transition-all duration-300  
-    ${scrolled ? "bg-white shadow-md py-2" : "bg-pink-200 py-4"}`}
+        className={`fixed md:max-h-screen max-h-1/2 top-0 left-0 w-full z-50 transition-all duration-300  
+    ${scrolled ? "bg-pink-200 shadow-md py-2" : "bg-pink-200 py-4"}`}
       >
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
           {/* Logo */}
-          <div className="flex items-center cursor-pointer"
+          <div
+            className="flex items-center cursor-pointer"
             onClick={() => router.push("/")}
           >
             <Image

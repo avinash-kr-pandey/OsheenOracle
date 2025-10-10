@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function HeroSection() {
   return (
-    <div className="relative flex flex-col items-center justify-center text-center px-4 mt-8 md:mt-16 lg:mt-20">
+    <div className="relative flex flex-col items-center justify-center text-center px-4 md:mt-0 mt-5">
       {/* Circle Background */}
       <div className="relative w-72 h-72 xs:w-80 xs:h-80 sm:w-96 sm:h-96 md:w-[400px] md:h-[400px] lg:w-[500px] lg:h-[500px] xl:w-[600px] xl:h-[600px] animate-float">
         <Image
