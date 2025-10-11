@@ -15,11 +15,9 @@ export default function LayoutWrapper({
   return (
     <div className="min-h-screen flex flex-col">
       {!hideHeaderFooter && <HeroHeader />}
-      <main
-        className={`flex-1 container ${
-          !hideHeaderFooter ? "pt-[96px] md:pt-[110px]" : "pt-0"
-        }`}
-      >
+
+  
+      <main>
         {children}
       </main>
 

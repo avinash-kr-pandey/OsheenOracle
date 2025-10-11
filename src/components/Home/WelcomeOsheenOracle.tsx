@@ -11,12 +11,12 @@ const WelcomeOsheenOracle = () => {
       <div className="relative max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center">
         {/* Left Section */}
         <div className="text-center md:text-left">
-          <h1
+          {/* <h1
             className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold mb-4 leading-snug text-purple-900"
             style={{ fontFamily: "var(--font-cormorant)" }}
           >
             Welcome to <br className="hidden md:block" /> Osheen Oracle
-          </h1>
+          </h1> */}
 
           <p
             className="text-base sm:text-lg md:text-xl mb-6 text-gray-700"
@@ -52,7 +52,7 @@ const WelcomeOsheenOracle = () => {
             className="text-2xl sm:text-3xl md:text-3xl font-bold text-[#3C3C3C] mb-3"
             style={{ fontFamily: "var(--font-cormorant)" }}
           >
-            About Osheen Oracle
+            Osheen Oracle
           </h2>
           <p
             className="text-base sm:text-lg md:text-xl text-[#3C3C3C] leading-relaxed text-justify md:text-left"

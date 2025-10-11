@@ -36,21 +36,30 @@ export default function HeroHeader() {
   return (
     <div>
       <header
-        className={`fixed md:max-h-screen max-h-1/2 top-0 left-0 w-full z-50 transition-all duration-300  
-    ${scrolled ? "bg-pink-200 shadow-md py-2" : "bg-pink-200 py-4"}`}
+        className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
+          scrolled ? "bg-pink-200 shadow-md py-2" : "bg-pink-200 py-4"
+        }`}
+        style={{ overflow: "visible" }}
       >
-        <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
-          {/* Logo */}
+        <div
+          className="max-w-7xl mx-auto px-4 flex items-center justify-between relative overflow-visible"
+        >
+          {/* Logo Wrapper */}
           <div
-            className="flex items-center cursor-pointer"
+            className="relative cursor-pointer"
             onClick={() => router.push("/")}
+            style={{ overflow: "visible" }}
           >
             <Image
-              width={scrolled ? 70 : 90}
-              height={scrolled ? 70 : 90}
+              width={scrolled ? 140 : 200}
+              height={scrolled ? 140 : 200}
               src="/logo.png"
               alt="Logo"
               className="rounded-full transition-all duration-300"
+              style={{
+                marginBottom: scrolled ? "-40px" : "-60px",
+                display: "block",
+              }}
             />
           </div>
 

@@ -12,8 +12,8 @@
 
 /* Root variables (light mode defaults) */
 :root {
-  --background: #D8FBFF;   /* custom background */
-  --foreground: #3D2E4F;   /* custom text color */
+  --background: #D8FBFF;  
+  --foreground: #3D2E4F;   
 
   /* Fonts */
   --font-heading: var(--font-charm);
@@ -21,8 +21,8 @@
   --font-body: var(--font-montserrat);
 
   /* Global spacing */
-  --spacing-section: 4rem; /* 64px */
-  --spacing-container: 1.5rem; /* default padding for container */
+  --spacing-section: 4rem; 
+  --spacing-container: 1.5rem; 
 }
 
 /* Dark mode (if needed) */
@@ -59,8 +59,8 @@ section {
 
 /* Text Selection Styling */
 ::selection {
-  background: #03d0e7;  /* highlight bg */
-  color: #3D2E4F;       /* text color when selected */
+  background: #03d0e7; 
+  color: #3D2E4F;       
 }
 
 
