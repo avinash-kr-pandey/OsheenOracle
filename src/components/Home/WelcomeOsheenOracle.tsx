@@ -70,13 +70,28 @@ const WelcomeOsheenOracle = () => {
 
         {/* Right Section - Image */}
         <div className="flex justify-center relative pt-12 md:pt-32">
-          <div className="relative w-60 h-80 sm:w-72 sm:h-96 md:w-[350px] md:h-[520px] lg:w-[400px] lg:h-[600px] rounded-2xl overflow-hidden shadow-2xl border-4 border-white">
+          {/* Image container */}
+          <div className="group relative w-60 h-80 sm:w-72 sm:h-96 md:w-[350px] md:h-[520px] lg:w-[400px] lg:h-[600px] rounded-2xl overflow-hidden shadow-2xl border-4 border-white transition-all duration-700 ease-out">
+            {/* Main Image */}
             <Image
               src="/assets/youaremagic.jpg"
               alt="Osheen Oracle"
               fill
-              className="object-cover"
+              className="object-cover scale-100 group-hover:scale-110 brightness-75 group-hover:brightness-100 transition-all duration-700 ease-in-out"
               priority
+            />
+
+            {/* Optional subtle overlay gradient (for depth) */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-60 group-hover:opacity-0 transition-all duration-700"></div>
+          </div>
+
+          {/* Overlay logo */}
+          <div className="absolute bottom-[-30px] right-[20px] sm:bottom-[-35px] sm:right-[35px] md:bottom-[-40px] md:right-[45px] w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 z-20">
+            <Image
+              src="/logo.png"
+              alt="Overlay Logo"
+              fill
+              className="object-cover"
             />
           </div>
         </div>

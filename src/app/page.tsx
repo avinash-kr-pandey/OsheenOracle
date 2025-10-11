@@ -14,7 +14,6 @@ export default function Home() {
        <header className="w-full">
         <HeroSection />
       </header>
-
       <WelcomeOsheenOracle />
       <WhyChooseUs />
       <Discover />

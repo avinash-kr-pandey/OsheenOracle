@@ -5,15 +5,15 @@ import Link from "next/link";
 
 export default function HeroSection() {
   return (
-    <div className="relative w-full md:top-0 top-10 md:min-h-screen min-h-[50vh] bg-gradient-to-b from-pink-200 to-blue-200 overflow-hidden flex items-center justify-center ">
+    <div className="relative w-full md:top-0 top-10 md:min-h-screen min-h-[50vh] bg-gradient-to-b from-pink-300 to-blue-200 overflow-hidden flex items-center justify-center ">
       {/* Top image with spacing */}
-      <div className="relative w-64 h-64 xs:w-72 xs:h-72 sm:w-40 sm:h-40 md:w-96 md:h-96 lg:w-[500px] lg:h-[500px] xl:w-[600px] xl:h-[600px] 2xl:w-[700px] 2xl:h-[700px] mx-auto mt-10 sm:mt-14 md:mt-16 lg:mt-20">
+      <div className="relative w-64 h-64 xs:w-72 xs:h-72 sm:w-40 sm:h-40 md:w-80 md:h-80 lg:w-[420px] lg:h-[420px] xl:w-[500px] xl:h-[500px] 2xl:w-[580px] 2xl:h-[580px] mx-auto mt-10 sm:mt-14 md:mt-16 lg:mt-20">
         <Image
           src="/images/roundimage.png"
           alt="circle background"
           width={600}
           height={600}
-          className="w-full h-full object-contain " 
+          className="w-full h-full object-contain"
           priority
         />
       </div>
