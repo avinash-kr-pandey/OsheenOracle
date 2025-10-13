@@ -1,5 +1,7 @@
+"use client";
 import Image from "next/image";
 import React from "react";
+import { motion } from "framer-motion";
 
 const mediaData = [
   {
@@ -40,19 +42,27 @@ const MediaSpotlight = () => {
         fontFamily: "var(--font-montserrat)",
       }}
     >
-      <h2 className="text-4xl sm:text-4xl md:text-5xl text-[#3D2E4F]">
+      <h2 className="text-4xl sm:text-4xl md:text-5xl text-[#3D2E4F] mb-2">
         Media Spotlight
       </h2>
-      <p className="mb-8 text-center text-sm text-[#3D2E4F]">
+      <p className="mb-8 text-center text-sm text-[#3D2E4F] max-w-xl">
         Lorem Ipsum is simply dummy text of the printing and typesetting
         industry.
       </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
-        {mediaData.map((item) => (
-          <div
+        {mediaData.map((item, index) => (
+          <motion.div
             key={item.id}
-            className="bg-white shadow-md rounded-lg p-4 flex flex-col items-center"
+            className="bg-white shadow-md rounded-lg p-4 flex flex-col items-center cursor-pointer transform perspective-1000"
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.2, duration: 0.6 }}
+            whileHover={{
+              rotateY: 10,
+              scale: 1.05,
+              transition: { duration: 0.3 },
+            }}
           >
             <div className="flex items-center mb-4">
               <span className="text-5xl font-bold text-gray-400 mr-2">
@@ -73,7 +83,7 @@ const MediaSpotlight = () => {
               width={300}
               height={300}
             />
-          </div>
+          </motion.div>
         ))}
       </div>
     </div>

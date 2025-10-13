@@ -2,27 +2,30 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const zodiacData = [
-  { name: "Aries", date: "Mar 21 - Apr 19" },
-  { name: "Taurus", date: "Apr 20 - May 20" },
-  { name: "Gemini", date: "May 21 - Jun 20" },
-  { name: "Cancer", date: "Jun 21 - Jul 22" },
-  { name: "Leo", date: "Jul 23 - Aug 22" },
-  { name: "Virgo", date: "Aug 23 - Sep 22" },
-  { name: "Libra", date: "Sep 23 - Oct 22" },
-  { name: "Scorpio", date: "Oct 23 - Nov 21" },
-  { name: "Sagittarius", date: "Nov 22 - Dec 21" },
-  { name: "Capricorn", date: "Dec 22 - Jan 19" },
-  { name: "Aquarius", date: "Jan 20 - Feb 18" },
-  { name: "Pisces", date: "Feb 19 - Mar 20" },
+  { id: 1, name: "Aries", date: "Mar 21 - Apr 19" },
+  { id: 2, name: "Taurus", date: "Apr 20 - May 20" },
+  { id: 3, name: "Gemini", date: "May 21 - Jun 20" },
+  { id: 4, name: "Cancer", date: "Jun 21 - Jul 22" },
+  { id: 5, name: "Leo", date: "Jul 23 - Aug 22" },
+  { id: 6, name: "Virgo", date: "Aug 23 - Sep 22" },
+  { id: 7, name: "Libra", date: "Sep 23 - Oct 22" },
+  { id: 8, name: "Scorpio", date: "Oct 23 - Nov 21" },
+  { id: 9, name: "Sagittarius", date: "Nov 22 - Dec 21" },
+  { id: 10, name: "Capricorn", date: "Dec 22 - Jan 19" },
+  { id: 11, name: "Aquarius", date: "Jan 20 - Feb 18" },
+  { id: 12, name: "Pisces", date: "Feb 19 - Mar 20" },
 ];
 
 const SliderRow = ({ rowData }: { rowData: typeof zodiacData }) => {
   const [index, setIndex] = useState(0);
   const [cardWidth, setCardWidth] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
-  const fullData = [...rowData, ...rowData, ...rowData]; // triple for smoother infinite effect
+  const router = useRouter();
+  const fullData = [...rowData, ...rowData, ...rowData]; // for infinite effect
 
   // Measure first card width
   useEffect(() => {
@@ -30,11 +33,8 @@ const SliderRow = ({ rowData }: { rowData: typeof zodiacData }) => {
       if (containerRef.current) {
         const firstCard = containerRef.current.querySelector(".card");
         if (firstCard) {
-          const style = getComputedStyle(firstCard as HTMLElement);
-          const gap = 24; // gap-6 = 1.5rem = 24px
-          setCardWidth(
-            (firstCard as HTMLElement).offsetWidth + parseInt(gap.toString())
-          );
+          const gap = 24; // gap-6
+          setCardWidth((firstCard as HTMLElement).offsetWidth + gap);
         }
       }
     };
@@ -57,7 +57,7 @@ const SliderRow = ({ rowData }: { rowData: typeof zodiacData }) => {
   }, [index, rowData.length]);
 
   return (
-    <div className="relative">
+    <div className="relative select-none">
       {/* Controls */}
       <div className="absolute -top-10 right-3 z-30 flex items-center gap-2">
         <button
@@ -75,43 +75,58 @@ const SliderRow = ({ rowData }: { rowData: typeof zodiacData }) => {
       </div>
 
       {/* Slider */}
-      <div
-        ref={containerRef}
-        className="overflow-hidden w-full flex justify-start"
-      >
+      <div ref={containerRef} className="overflow-hidden w-full">
         <motion.div
-          className="flex gap-6"
+          className="flex gap-6 py-2 cursor-grab active:cursor-grabbing"
           animate={{ x: -index * cardWidth }}
           transition={{ type: "spring", stiffness: 90, damping: 20 }}
           style={{ width: "max-content" }}
+          drag="x"
+          dragConstraints={{ left: -1000, right: 0 }} // safe limit for swiping
+          dragElastic={0.2}
+          onDragEnd={(e, info) => {
+            // Swipe handling
+            const threshold = 80; // drag distance to trigger next/prev
+            if (info.offset.x < -threshold) {
+              handleNext();
+            } else if (info.offset.x > threshold) {
+              handlePrev();
+            }
+          }}
         >
           {fullData.map((zodiac, i) => (
             <div
               key={i}
-              className="card flex-shrink-0 rounded-2xl cursor-pointer transition-all p-4 text-left w-[250px]"
-              style={{ fontFamily: "var(--font-montserrat)" }}
+              className="card flex-shrink-0 rounded-2xl transition-all w-[260px] bg-white overflow-hidden shadow-md hover:shadow-xl duration-300"
             >
-              <div className="h-28 bg-gradient-to-r from-gray-300 to-gray-400 rounded-lg mb-3" />
-              <div className="flex justify-between items-center">
-                <h3
-                  className="font-semibold text-gray-800 text-base"
-                  style={{ fontFamily: "var(--font-montserrat)" }}
-                >
-                  {zodiac.name}
-                </h3>
-                <p
-                  className="text-sm text-gray-600"
-                  style={{ fontFamily: "var(--font-montserrat)" }}
-                >
-                  {zodiac.date}
-                </p>
+              {/* Image with hover zoom */}
+              <div className="relative w-full h-[330px] overflow-hidden">
+                <Image
+                  src="https://osheenoracle.com/wp-content/uploads/2024/12/card-ppp.jpg"
+                  alt={zodiac.name}
+                  fill
+                  className="object-cover transform transition-transform duration-500 hover:scale-105"
+                />
               </div>
-              <button
-                className="text-sm text-blue-600 mt-3 flex items-center justify-center hover:underline"
-                style={{ fontFamily: "var(--font-montserrat)" }}
-              >
-                Read More →
-              </button>
+
+              {/* Text */}
+              <div className="text-center py-6 px-4">
+                <h3
+                  className="text-xl font-semibold text-[#3D2E4F]"
+                  style={{ fontFamily: "var(--font-montserrat)" }}
+                >
+                  {zodiac.name} Reading
+                </h3>
+
+                {/* Button */}
+                <button
+                  onClick={() => router.push(`/booking/${zodiac.id}`)}
+                  className="mt-5 bg-black text-white text-sm font-medium py-2 px-6 rounded-full hover:bg-gray-800 transition-all cursor-pointer"
+                  style={{ fontFamily: "var(--font-montserrat)" }}
+                >
+                  Book Now
+                </button>
+              </div>
             </div>
           ))}
         </motion.div>

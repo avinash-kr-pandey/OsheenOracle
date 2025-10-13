@@ -36,7 +36,7 @@ export default function HeroHeader() {
   return (
     <header
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-        scrolled ? "bg-pink-200 shadow-md py-2" : "bg-pink-200 py-3"
+        scrolled ? "bg-[#FBB5E7] py-4" : "bg-[#FBB5E7] py-4"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 flex items-center justify-between relative">
@@ -49,7 +49,7 @@ export default function HeroHeader() {
             <Image
               src="/logo.png"
               alt="Logo"
-              width={scrolled ? 90 : 120} // default desktop size
+              width={scrolled ? 90 : 120} 
               height={scrolled ? 90 : 120}
               className="rounded-full transition-all duration-300 hidden sm:block"
               style={{
@@ -123,7 +123,7 @@ export default function HeroHeader() {
         onClick={() => setMenuOpen(false)}
       >
         <div
-          className={`absolute top-0 right-0 h-full w-4/5 max-w-sm bg-gradient-to-b from-purple-900 to-pink-800 shadow-2xl transition-transform duration-500 ${
+          className={`absolute top-0 right-0 h-full w-4/5 max-w-sm bg-gradient-to-b from-purple-900 to-[#FBB5E7]  transition-transform duration-500 ${
             menuOpen ? "translate-x-0" : "translate-x-full"
           }`}
           onClick={(e) => e.stopPropagation()}

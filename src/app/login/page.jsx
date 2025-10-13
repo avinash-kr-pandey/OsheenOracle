@@ -1,187 +1,430 @@
 "use client";
 
 import React, { useState } from "react";
-import { FcGoogle } from "react-icons/fc";
-import { FaGithub, FaFacebook } from "react-icons/fa";
 import Image from "next/image";
+import { FcGoogle } from "react-icons/fc";
+import { FaMicrosoft } from "react-icons/fa";
 
-const AuthPage = () => {
-  const [isRegister, setIsRegister] = useState(false);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [otp, setOtp] = useState("");
-  const [password, setPassword] = useState("");
+const AuthFlow = () => {
+  const [currentPage, setCurrentPage] = useState("login"); // login, register, forgot-password, otp
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    otp: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [timer, setTimer] = useState(0);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (isRegister) {
-      console.log("Register Data:", { name, email, phone, otp });
-    } else {
-      console.log("Login Data:", { email, password });
+
+    switch (currentPage) {
+      case "login":
+        console.log("Login Data:", {
+          email: formData.email,
+          password: formData.password,
+        });
+        break;
+      case "register":
+        console.log("Register Data:", formData);
+        // After registration, move to OTP verification
+        setCurrentPage("otp");
+        startTimer();
+        break;
+      case "forgot-password":
+        console.log("Forgot Password Email:", formData.email);
+        // Send OTP for password reset
+        setCurrentPage("otp");
+        startTimer();
+        break;
+      case "otp":
+        console.log("OTP Verification:", formData.otp);
+        if (timer > 0) {
+          // Verify OTP logic here
+          alert("OTP verified successfully!");
+          setCurrentPage("login");
+        }
+        break;
+      default:
+        break;
     }
   };
 
-  return (
-    <div className="bg-gradient-to-b from-[#E8CDF0] to-[#C8F4FD] w-full min-h-screen flex flex-col">
-      {/* Logo */}
-      <div className="w-full flex justify-center md:justify-start p-4 md:px-10">
+  const startTimer = () => {
+    setTimer(59);
+    const interval = setInterval(() => {
+      setTimer((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  const resendOTP = () => {
+    if (timer === 0) {
+      startTimer();
+      console.log("OTP resent to:", formData.email);
+    }
+  };
+
+  const LeftSection = () => (
+    <div className="md:w-1/2 flex flex-col justify-center p-10 relative text-gray-700">
+      <Image
+        src="/images/roundimage.png"
+        alt="Zodiac Wheel"
+        width={600}
+        height={600}
+        className="absolute inset-0 w-full h-full object-contain opacity-10"
+      />
+      <div className="relative z-10">
         <Image
           src="/logo.png"
           alt="Logo"
           width={80}
           height={80}
-          className="object-cover"
+          className="mb-6"
         />
+        <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-800 mb-4 leading-tight">
+          One tool for your <br /> whole team needs
+        </h1>
+        <p className="text-gray-600 text-sm sm:text-base mb-8">
+          We are lorem ipsum team dolor sit amet, consectetur adipiscing elit,
+          sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        </p>
+
+        <div className="flex items-center gap-2">
+          <div className="flex -space-x-2">
+            <div className="w-10 h-10 bg-purple-400 rounded-full border-2 border-white"></div>
+            <div className="w-10 h-10 bg-blue-400 rounded-full border-2 border-white"></div>
+            <div className="w-10 h-10 bg-green-400 rounded-full border-2 border-white"></div>
+          </div>
+          <span className="text-gray-700 font-medium text-sm sm:text-base">
+            3k+ people joined us, now it's your turn
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+
+  const LoginPage = () => (
+    <>
+      <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-6 text-center">
+        Sign in
+      </h2>
+
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <input
+          type="email"
+          name="email"
+          placeholder="Email address"
+          value={formData.email}
+          onChange={handleChange}
+          className="border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-400 outline-none"
+          required
+        />
+
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={formData.password}
+          onChange={handleChange}
+          className="border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-400 outline-none"
+          required
+        />
+
+        <span
+          onClick={() => setCurrentPage("forgot-password")}
+          className="text-right text-sm text-purple-600 hover:underline cursor-pointer"
+        >
+          Forgot password?
+        </span>
+
+        <button
+          type="submit"
+          className="mt-2 bg-gray-800 text-white py-3 rounded-lg hover:bg-gray-900 transition-all font-medium"
+        >
+          Sign In
+        </button>
+      </form>
+
+      <div className="my-5 flex items-center">
+        <div className="flex-1 h-px bg-gray-300"></div>
+        <span className="px-3 text-gray-500 text-sm">or</span>
+        <div className="flex-1 h-px bg-gray-300"></div>
       </div>
 
-      <div
-        className="flex-1 flex items-center justify-center md:px-4 px-2 md:py-0 py-5"
-        style={{ fontFamily: "var(--font-montserrat)" }}
-      >
-        <div className="flex flex-col md:flex-row w-full max-w-7xl gap-6 md:gap-10">
-          {/* Welcome Message (LEFT SIDE now) */}
-          <div className="order-1 w-full md:w-2/3 flex flex-col items-center justify-center relative p-6 sm:p-10">
-            <Image
-              src="/images/roundimage.png"
-              alt="Zodiac Wheel"
-              className="absolute inset-0 w-full h-full object-contain opacity-20"
-              width={600}
-              height={600}
+      <div className="flex justify-center gap-4">
+        <button className="flex items-center justify-center gap-2 border border-gray-300 px-4 py-3 rounded-lg bg-white hover:bg-gray-100 transition w-full max-w-[150px]">
+          <FcGoogle size={22} />
+          <span className="text-sm font-medium text-gray-700">Google</span>
+        </button>
+        <button className="flex items-center justify-center gap-2 border border-gray-300 px-4 py-3 rounded-lg bg-white hover:bg-gray-100 transition w-full max-w-[150px]">
+          <FaMicrosoft size={20} color="#0078D4" />
+          <span className="text-sm font-medium text-gray-700">Microsoft</span>
+        </button>
+      </div>
+
+      <p className="text-center text-gray-600 mt-6 text-sm">
+        Don't have an account?{" "}
+        <span
+          onClick={() => setCurrentPage("register")}
+          className="text-purple-700 font-medium cursor-pointer hover:underline"
+        >
+          Register for free
+        </span>
+      </p>
+    </>
+  );
+
+  const RegisterPage = () => (
+    <>
+      <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-6 text-center">
+        Create an account
+      </h2>
+
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <input
+          type="text"
+          name="name"
+          placeholder="Full Name"
+          value={formData.name}
+          onChange={handleChange}
+          className="border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-400 outline-none"
+          required
+        />
+
+        <input
+          type="email"
+          name="email"
+          placeholder="Email address"
+          value={formData.email}
+          onChange={handleChange}
+          className="border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-400 outline-none"
+          required
+        />
+
+        <input
+          type="tel"
+          name="phone"
+          placeholder="Phone Number"
+          value={formData.phone}
+          onChange={handleChange}
+          className="border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-400 outline-none"
+          required
+        />
+
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={formData.password}
+          onChange={handleChange}
+          className="border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-400 outline-none"
+          required
+        />
+
+        <input
+          type="password"
+          name="confirmPassword"
+          placeholder="Confirm Password"
+          value={formData.confirmPassword}
+          onChange={handleChange}
+          className="border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-400 outline-none"
+          required
+        />
+
+        <button
+          type="submit"
+          className="mt-2 bg-gray-800 text-white py-3 rounded-lg hover:bg-gray-900 transition-all font-medium"
+        >
+          Register
+        </button>
+      </form>
+
+      <div className="my-5 flex items-center">
+        <div className="flex-1 h-px bg-gray-300"></div>
+        <span className="px-3 text-gray-500 text-sm">or</span>
+        <div className="flex-1 h-px bg-gray-300"></div>
+      </div>
+
+      <div className="flex justify-center gap-4">
+        <button className="flex items-center justify-center gap-2 border border-gray-300 px-4 py-3 rounded-lg bg-white hover:bg-gray-100 transition w-full max-w-[150px]">
+          <FcGoogle size={22} />
+          <span className="text-sm font-medium text-gray-700">Google</span>
+        </button>
+        <button className="flex items-center justify-center gap-2 border border-gray-300 px-4 py-3 rounded-lg bg-white hover:bg-gray-100 transition w-full max-w-[150px]">
+          <FaMicrosoft size={20} color="#0078D4" />
+          <span className="text-sm font-medium text-gray-700">Microsoft</span>
+        </button>
+      </div>
+
+      <p className="text-center text-gray-600 mt-6 text-sm">
+        Already have an account?{" "}
+        <span
+          onClick={() => setCurrentPage("login")}
+          className="text-purple-700 font-medium cursor-pointer hover:underline"
+        >
+          Login here
+        </span>
+      </p>
+    </>
+  );
+
+  const ForgotPasswordPage = () => (
+    <>
+      <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 text-center">
+        Forgot Password
+      </h2>
+      <p className="text-gray-600 text-center mb-6">
+        Enter your email to reset your password
+      </p>
+
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <input
+          type="email"
+          name="email"
+          placeholder="Email address"
+          value={formData.email}
+          onChange={handleChange}
+          className="border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-400 outline-none"
+          required
+        />
+
+        <button
+          type="submit"
+          className="mt-2 bg-gray-800 text-white py-3 rounded-lg hover:bg-gray-900 transition-all font-medium"
+        >
+          Send Reset Code
+        </button>
+      </form>
+
+      <p className="text-center text-gray-600 mt-6 text-sm">
+        Remember your password?{" "}
+        <span
+          onClick={() => setCurrentPage("login")}
+          className="text-purple-700 font-medium cursor-pointer hover:underline"
+        >
+          Back to login
+        </span>
+      </p>
+    </>
+  );
+
+  const OTPPage = () => (
+    <>
+      <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 text-center">
+        Verify OTP
+      </h2>
+      <p className="text-gray-600 text-center mb-6">
+        Enter the OTP sent to your email
+      </p>
+
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <div className="flex justify-center gap-2 mb-4">
+          {[1, 2, 3, 4, 5, 6].map((index) => (
+            <input
+              key={index}
+              type="text"
+              maxLength={1}
+              name="otp"
+              className="w-12 h-12 border border-gray-300 rounded-lg text-center text-xl font-semibold focus:ring-2 focus:ring-purple-400 outline-none"
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value) {
+                  const nextInput = e.target.nextElementSibling;
+                  if (nextInput) nextInput.focus();
+                }
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Backspace" && !e.target.value) {
+                  const prevInput = e.target.previousElementSibling;
+                  if (prevInput) prevInput.focus();
+                }
+              }}
             />
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-purple-700 text-center md:text-left z-10 font-bold leading-tight">
-              Welcome to <br /> Osheen Oracle
-            </h1>
-          </div>
+          ))}
+        </div>
 
-          {/* Auth Form (RIGHT SIDE now) */}
-          <div className="order-2 w-full md:w-1/3 bg-white bg-opacity-90 p-6 sm:p-10 flex flex-col justify-center rounded-lg shadow-2xl">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-900 mb-6 text-center md:text-left">
-              {isRegister ? "Register" : "Login"}
-            </h2>
+        <div className="text-center mb-4">
+          {timer > 0 ? (
+            <span className="text-gray-600 text-sm">
+              Resend OTP in <span className="font-semibold">{timer}</span>{" "}
+              seconds
+            </span>
+          ) : (
+            <span
+              onClick={resendOTP}
+              className="text-purple-600 text-sm hover:underline cursor-pointer"
+            >
+              Resend OTP
+            </span>
+          )}
+        </div>
 
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-              {isRegister && (
-                <>
-                  <div className="flex flex-col">
-                    <label className="text-sm sm:text-base text-gray-700 mb-1">
-                      Name
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Your Name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-                      required
-                    />
-                  </div>
+        <button
+          type="submit"
+          className="mt-2 bg-gray-800 text-white py-3 rounded-lg hover:bg-gray-900 transition-all font-medium"
+          disabled={timer === 0}
+        >
+          Verify OTP
+        </button>
+      </form>
 
-                  <div className="flex flex-col">
-                    <label className="text-sm sm:text-base text-gray-700 mb-1">
-                      Phone Number
-                    </label>
-                    <input
-                      type="tel"
-                      placeholder="+91 9876543210"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-                      required
-                    />
-                  </div>
+      <p className="text-center text-gray-600 mt-6 text-sm">
+        <span
+          onClick={() => setCurrentPage("login")}
+          className="text-purple-700 font-medium cursor-pointer hover:underline"
+        >
+          Back to login
+        </span>
+      </p>
+    </>
+  );
 
-                  <div className="flex flex-col">
-                    <label className="text-sm sm:text-base text-gray-700 mb-1">
-                      OTP
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Enter OTP"
-                      value={otp}
-                      onChange={(e) => setOtp(e.target.value)}
-                      className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-                      required
-                    />
-                  </div>
-                </>
-              )}
+  const renderRightSection = () => {
+    switch (currentPage) {
+      case "login":
+        return <LoginPage />;
+      case "register":
+        return <RegisterPage />;
+      case "forgot-password":
+        return <ForgotPasswordPage />;
+      case "otp":
+        return <OTPPage />;
+      default:
+        return <LoginPage />;
+    }
+  };
 
-              {!isRegister && (
-                <>
-                  <div className="flex flex-col">
-                    <label className="text-sm sm:text-base text-gray-700 mb-1">
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      placeholder="username@gmail.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-                      required
-                    />
-                  </div>
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#E5CFF7] via-[#D3E7FA] to-[#C8F4FD] p-4">
+      <div className="w-full flex flex-col md:flex-row justify-between">
+        {/* LEFT SECTION */}
+        <LeftSection />
 
-                  <div className="flex flex-col">
-                    <label className="text-sm sm:text-base text-gray-700 mb-1">
-                      Password
-                    </label>
-                    <input
-                      type="password"
-                      placeholder="Password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-                      required
-                    />
-                    <span className="text-sm sm:text-base text-blue-700 mt-1 cursor-pointer hover:underline text-right">
-                      Forgot Password?
-                    </span>
-                  </div>
-                </>
-              )}
+        {/* RIGHT SECTION */}
+        <div className="md:w-1/2 bg-white/70 p-10 flex flex-col justify-center rounded-xl transition-all duration-300">
+          {renderRightSection()}
 
-              <button
-                type="submit"
-                className="mt-4 bg-orange-500 text-white py-2 rounded-lg font-semibold hover:bg-orange-600 transition shadow-md"
-              >
-                {isRegister ? "Register" : "Sign in"}
-              </button>
-            </form>
-
-            <p className="text-center my-4 text-gray-500 text-sm sm:text-base">
-              or continue with
-            </p>
-
-            <div className="flex justify-center gap-4 flex-wrap">
-              <button className="p-3 rounded-full bg-white shadow-lg hover:scale-105 transition">
-                <FcGoogle size={24} />
-              </button>
-              <button className="p-3 rounded-full bg-white shadow-lg hover:scale-105 transition">
-                <FaGithub size={24} />
-              </button>
-              <button className="p-3 rounded-full bg-white shadow-lg hover:scale-105 transition">
-                <FaFacebook size={24} color="#1877F2" />
-              </button>
-            </div>
-
-            <p className="text-center text-gray-500 mt-6 text-sm">
-              {isRegister
-                ? "Already have an account? "
-                : "Don't have an account yet? "}
-              <span
-                className="text-blue-700 cursor-pointer hover:underline font-medium"
-                onClick={() => setIsRegister(!isRegister)}
-              >
-                {isRegister ? "Login here" : "Register for free"}
-              </span>
-            </p>
-          </div>
+          <p className="text-center text-xs text-gray-500 mt-8">
+            Protected by reCAPTCHA and subject to the{" "}
+            <span className="underline cursor-pointer">Privacy Policy</span> and{" "}
+            <span className="underline cursor-pointer">Terms of Service</span>.
+          </p>
         </div>
       </div>
     </div>
   );
 };
 
-export default AuthPage;
+export default AuthFlow;
