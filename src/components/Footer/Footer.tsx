@@ -55,29 +55,13 @@ const Footer = () => {
                   <Image
                     src="/logo.png"
                     alt="Celestial Logo"
-                    width={80}
-                    height={80}
-                    className="group-hover:scale-110 transition-transform duration-500 group-hover:rotate-6"
+                    width={150}
+                    height={150}
+                    className="group-hover:scale-110 transition-transform duration-500"
                   />
-                  <div className="absolute -inset-1 bg-gradient-to-r from-[#FBB5E7] to-[#c6e400] rounded-full blur-sm opacity-30 group-hover:opacity-60 transition-all duration-500"></div>
+                  <div className="absolute -inset-1 rounded-full blur-sm opacity-30 group-hover:opacity-60 transition-all duration-500"></div>
                 </div>
-                <div>
-                  <h2 className="text-xl font-bold bg-gradient-to-r from-[#FBB5E7] via-white to-[#c6e400] bg-clip-text text-transparent animate-gradient">
-                    Osheen Oracle
-                  </h2>
-                  <div className="flex items-center space-x-1">
-                    {[...Array(5)].map((_, i) => (
-                      <FaStar
-                        key={i}
-                        className="text-xs animate-bounce"
-                        style={{
-                          color: i % 2 === 0 ? "#FBB5E7" : "#c6e400",
-                          animationDelay: `${i * 0.2}s`,
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
+              
               </div>
 
               <p className="text-gray-300 leading-relaxed text-sm hover:text-white transition-colors duration-300">
@@ -105,7 +89,7 @@ const Footer = () => {
             {/* Company Links - Enhanced */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold mb-4 flex items-center space-x-2">
-                <div className="bg-gradient-to-r from-[#FBB5E7] to-[#c6e400] p-2 rounded-lg">
+                <div className="bg-pink-200 p-2 rounded-lg">
                   <FaRegCompass className="text-white text-sm" />
                 </div>
                 <span className="bg-gradient-to-r from-[#FBB5E7] to-[#c6e400] bg-clip-text text-transparent">
@@ -138,7 +122,7 @@ const Footer = () => {
             {/* Services - Enhanced */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold mb-4 flex items-center space-x-2">
-                <div className="bg-gradient-to-r from-[#c6e400] to-[#FBB5E7] p-2 rounded-lg">
+                <div className="bg-[#FBB5E7] p-2 rounded-lg">
                   <FaStar className="text-white text-sm" />
                 </div>
                 <span className="bg-gradient-to-r from-[#c6e400] to-[#FBB5E7] bg-clip-text text-transparent">
@@ -186,7 +170,7 @@ const Footer = () => {
                     key={index}
                     className="flex items-start space-x-3 group cursor-pointer transform hover:translate-x-2 transition-transform duration-500"
                   >
-                    <div className="w-7 h-7 bg-gradient-to-br from-[#FBB5E7] to-[#c6e400] rounded-full flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500 shadow-lg">
+                    <div className="w-7 h-7 bg-[#FBB5E7] to-[#c6e400] rounded-full flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500 shadow-lg">
                       <span className="text-black text-xs font-bold">
                         {item.icon}
                       </span>
@@ -199,7 +183,7 @@ const Footer = () => {
               </div>
 
               {/* Newsletter Signup */}
-              <div className="mt-6 p-4 bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-xl border border-gray-700/50 hover:border-[#FBB5E7]/30 transition-all duration-500 w-full">
+              <div className=" transition-all duration-500 w-full">
                 <p className="text-gray-300 text-sm mb-3">
                   Get cosmic insights delivered
                 </p>
