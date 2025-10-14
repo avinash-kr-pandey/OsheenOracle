@@ -15,13 +15,13 @@ export default function Home() {
         <HeroSection />
       </header>
       <WelcomeOsheenOracle />
-      <WhyChooseUs />
       <Discover />
       <Achievements />
       <MediaSpotlight />
       <Catalogue />
       <MEMBER />
       <Blog />
+      <WhyChooseUs />
     </>
   );
 }

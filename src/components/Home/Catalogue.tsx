@@ -6,28 +6,100 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 const zodiacData = [
-  { id: 1, name: "Aries", date: "Mar 21 - Apr 19" },
-  { id: 2, name: "Taurus", date: "Apr 20 - May 20" },
-  { id: 3, name: "Gemini", date: "May 21 - Jun 20" },
-  { id: 4, name: "Cancer", date: "Jun 21 - Jul 22" },
-  { id: 5, name: "Leo", date: "Jul 23 - Aug 22" },
-  { id: 6, name: "Virgo", date: "Aug 23 - Sep 22" },
-  { id: 7, name: "Libra", date: "Sep 23 - Oct 22" },
-  { id: 8, name: "Scorpio", date: "Oct 23 - Nov 21" },
-  { id: 9, name: "Sagittarius", date: "Nov 22 - Dec 21" },
-  { id: 10, name: "Capricorn", date: "Dec 22 - Jan 19" },
-  { id: 11, name: "Aquarius", date: "Jan 20 - Feb 18" },
-  { id: 12, name: "Pisces", date: "Feb 19 - Mar 20" },
+  {
+    id: 1,
+    name: "Aries",
+    date: "Mar 21 - Apr 19",
+    image: "https://osheenoracle.com/wp-content/uploads/2024/12/card-ppp.jpg",
+    description: "Start your journey with courage and energy.",
+  },
+  {
+    id: 2,
+    name: "Taurus",
+    date: "Apr 20 - May 20",
+    image: "https://osheenoracle.com/wp-content/uploads/2024/12/card-pp.png",
+    description: "Steadiness and patience will guide you.",
+  },
+  {
+    id: 3,
+    name: "Gemini",
+    date: "May 21 - Jun 20",
+    image: "https://osheenoracle.com/wp-content/uploads/2024/12/card-ddd.jpg",
+    description: "Embrace curiosity and adaptability.",
+  },
+  {
+    id: 4,
+    name: "Cancer",
+    date: "Jun 21 - Jul 22",
+    image: "https://osheenoracle.com/wp-content/uploads/2024/12/card-l.jpg",
+    description: "Trust your intuition and emotions.",
+  },
+  {
+    id: 5,
+    name: "Leo",
+    date: "Jul 23 - Aug 22",
+    image: "https://osheenoracle.com/wp-content/uploads/2024/12/card-eee.jpg",
+    description: "Confidence and creativity lead the way.",
+  },
+  {
+    id: 6,
+    name: "Virgo",
+    date: "Aug 23 - Sep 22",
+    image: "https://osheenoracle.com/wp-content/uploads/2024/12/card-pppp.jpg",
+    description: "Focus on details and practical solutions.",
+  },
+  {
+    id: 7,
+    name: "Libra",
+    date: "Sep 23 - Oct 22",
+    image: "https://osheenoracle.com/wp-content/uploads/2024/12/card-dddd.jpg",
+    description: "Balance and harmony will guide decisions.",
+  },
+  {
+    id: 8,
+    name: "Scorpio",
+    date: "Oct 23 - Nov 21",
+    image: "https://osheenoracle.com/wp-content/uploads/2024/12/card-q.jpg",
+    description: "Passion and transformation await you.",
+  },
+  {
+    id: 9,
+    name: "Sagittarius",
+    date: "Nov 22 - Dec 21",
+    image: "https://osheenoracle.com/wp-content/uploads/2024/12/card-m.jpg",
+    description: "Adventure and optimism will thrive.",
+  },
+  {
+    id: 10,
+    name: "Capricorn",
+    date: "Dec 22 - Jan 19",
+    image: "https://osheenoracle.com/wp-content/uploads/2024/12/card-hh.jpg",
+    description: "Discipline and persistence will pay off.",
+  },
+  {
+    id: 11,
+    name: "Aquarius",
+    date: "Jan 20 - Feb 18",
+    image: "https://osheenoracle.com/wp-content/uploads/2024/12/card-ppp.jpg",
+    description: "Innovation and originality are key.",
+  },
+  {
+    id: 12,
+    name: "Pisces",
+    date: "Feb 19 - Mar 20",
+    image: "https://osheenoracle.com/wp-content/uploads/2024/12/card-pp.png",
+    description: "Imagination and compassion lead the way.",
+  },
 ];
+
 
 const SliderRow = ({ rowData }: { rowData: typeof zodiacData }) => {
   const [index, setIndex] = useState(0);
   const [cardWidth, setCardWidth] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
-  const fullData = [...rowData, ...rowData, ...rowData]; // for infinite effect
+  const fullData = [...rowData, ...rowData, ...rowData]; // infinite effect
 
-  // Measure first card width
   useEffect(() => {
     const update = () => {
       if (containerRef.current) {
@@ -46,7 +118,6 @@ const SliderRow = ({ rowData }: { rowData: typeof zodiacData }) => {
   const handleNext = () => setIndex((prev) => prev + 1);
   const handlePrev = () => setIndex((prev) => prev - 1);
 
-  // Infinite loop correction
   useEffect(() => {
     const total = rowData.length;
     if (index < 0) {
@@ -82,16 +153,12 @@ const SliderRow = ({ rowData }: { rowData: typeof zodiacData }) => {
           transition={{ type: "spring", stiffness: 90, damping: 20 }}
           style={{ width: "max-content" }}
           drag="x"
-          dragConstraints={{ left: -1000, right: 0 }} // safe limit for swiping
+          dragConstraints={{ left: -1000, right: 0 }}
           dragElastic={0.2}
           onDragEnd={(e, info) => {
-            // Swipe handling
-            const threshold = 80; // drag distance to trigger next/prev
-            if (info.offset.x < -threshold) {
-              handleNext();
-            } else if (info.offset.x > threshold) {
-              handlePrev();
-            }
+            const threshold = 80;
+            if (info.offset.x < -threshold) handleNext();
+            else if (info.offset.x > threshold) handlePrev();
           }}
         >
           {fullData.map((zodiac, i) => (
@@ -102,7 +169,7 @@ const SliderRow = ({ rowData }: { rowData: typeof zodiacData }) => {
               {/* Image with hover zoom */}
               <div className="relative w-full h-[330px] overflow-hidden">
                 <Image
-                  src="https://osheenoracle.com/wp-content/uploads/2024/12/card-ppp.jpg"
+                  src={zodiac.image}
                   alt={zodiac.name}
                   fill
                   className="object-cover transform transition-transform duration-500 hover:scale-105"
@@ -118,7 +185,10 @@ const SliderRow = ({ rowData }: { rowData: typeof zodiacData }) => {
                   {zodiac.name} Reading
                 </h3>
 
-                {/* Button */}
+                <p className="mt-3 text-sm text-gray-600">
+                  {zodiac.description}
+                </p>
+
                 <button
                   onClick={() => router.push(`/booking/${zodiac.id}`)}
                   className="mt-5 bg-black text-white text-sm font-medium py-2 px-6 rounded-full hover:bg-gray-800 transition-all cursor-pointer"

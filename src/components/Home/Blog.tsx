@@ -41,7 +41,6 @@ const Blog: React.FC = () => {
     <div
       className="px-8 py-12 relative"
       style={{
-        backgroundColor: "#d9f4fa",
         fontFamily: "var(--font-montserrat)",
       }}
     >

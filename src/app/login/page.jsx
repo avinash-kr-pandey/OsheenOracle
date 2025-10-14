@@ -1,430 +1,691 @@
 "use client";
 
-import React, { useState } from "react";
 import Image from "next/image";
+import React, { useState, useEffect } from "react";
+import { FaAppleAlt, FaArrowLeft } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
-import { FaMicrosoft } from "react-icons/fa";
 
-const AuthFlow = () => {
-  const [currentPage, setCurrentPage] = useState("login"); // login, register, forgot-password, otp
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    otp: "",
-    password: "",
-    confirmPassword: "",
-  });
-  const [timer, setTimer] = useState(0);
+const Login = () => {
+  const [isLogin, setIsLogin] = useState(true);
+  const [authStep, setAuthStep] = useState("login"); // 'login', 'otp', 'forgot', 'reset', 'newPassword'
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleOtpChange = (element, index) => {
+    if (isNaN(element.value)) return false;
+
+    setOtp([...otp.map((d, idx) => (idx === index ? element.value : d))]);
+
+    // Focus next input
+    if (element.nextSibling && element.value !== "") {
+      element.nextSibling.focus();
+    }
   };
 
-  const handleSubmit = (e) => {
+  const handleBack = () => {
+    if (authStep === "otp") {
+      setAuthStep("login");
+      setOtpVerified(false);
+    } else if (authStep === "forgot") {
+      setAuthStep("login");
+    } else if (authStep === "reset") {
+      setAuthStep("forgot");
+      setOtpVerified(false);
+    } else if (authStep === "newPassword") {
+      setAuthStep("reset");
+    }
+  };
+
+  const handleLogin = (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
-    switch (currentPage) {
-      case "login":
-        console.log("Login Data:", {
-          email: formData.email,
-          password: formData.password,
-        });
-        break;
-      case "register":
-        console.log("Register Data:", formData);
-        // After registration, move to OTP verification
-        setCurrentPage("otp");
-        startTimer();
-        break;
-      case "forgot-password":
-        console.log("Forgot Password Email:", formData.email);
-        // Send OTP for password reset
-        setCurrentPage("otp");
-        startTimer();
-        break;
-      case "otp":
-        console.log("OTP Verification:", formData.otp);
-        if (timer > 0) {
-          // Verify OTP logic here
-          alert("OTP verified successfully!");
-          setCurrentPage("login");
+    // Simulate API call
+    setTimeout(() => {
+      setIsLoading(false);
+      setAuthStep("otp");
+    }, 1500);
+  };
+
+  const handleOtpSubmit = (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    // Simulate OTP verification
+    setTimeout(() => {
+      setIsLoading(false);
+      const enteredOtp = otp.join("");
+
+      // Check if OTP is correct (for demo, any 6-digit OTP works)
+      if (enteredOtp.length === 6 && !isNaN(enteredOtp)) {
+        setOtpVerified(true);
+        if (authStep === "otp") {
+          // Login OTP verified
+          alert("Login successful!");
+          setAuthStep("login");
+          setOtp(["", "", "", "", "", ""]);
+          setOtpVerified(false);
+        } else if (authStep === "reset") {
+          // Forgot password OTP verified - show new password fields
+          setAuthStep("newPassword");
         }
-        break;
-      default:
-        break;
+      } else {
+        alert("Invalid OTP. Please try again.");
+      }
+    }, 1500);
+  };
+
+  const handleForgotPassword = (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    // Simulate sending OTP
+    setTimeout(() => {
+      setIsLoading(false);
+      setAuthStep("reset");
+    }, 1500);
+  };
+
+  const handlePasswordReset = (e) => {
+    e.preventDefault();
+    if (newPassword !== confirmPassword) {
+      alert("Passwords don't match!");
+      return;
     }
+
+    setIsLoading(true);
+
+    // Simulate password reset
+    setTimeout(() => {
+      setIsLoading(false);
+      alert("Password reset successful!");
+      setAuthStep("login");
+      setNewPassword("");
+      setConfirmPassword("");
+      setOtpVerified(false);
+    }, 1500);
   };
 
-  const startTimer = () => {
-    setTimer(59);
-    const interval = setInterval(() => {
-      setTimer((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-  };
+  const renderLoginForm = () => (
+    <form onSubmit={handleLogin} className="space-y-4 md:space-y-6">
+      <h1 className="text-2xl md:text-3xl font-semibold pb-2 text-center text-gray-700">
+        Sign in
+      </h1>
 
-  const resendOTP = () => {
-    if (timer === 0) {
-      startTimer();
-      console.log("OTP resent to:", formData.email);
-    }
-  };
-
-  const LeftSection = () => (
-    <div className="md:w-1/2 flex flex-col justify-center p-10 relative text-gray-700">
-      <Image
-        src="/images/roundimage.png"
-        alt="Zodiac Wheel"
-        width={600}
-        height={600}
-        className="absolute inset-0 w-full h-full object-contain opacity-10"
-      />
-      <div className="relative z-10">
-        <Image
-          src="/logo.png"
-          alt="Logo"
-          width={80}
-          height={80}
-          className="mb-6"
+      <div className="flex flex-col gap-4 md:gap-6">
+        <input
+          placeholder="Email address"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300 text-sm md:text-base"
+          required
         />
-        <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-800 mb-4 leading-tight">
-          One tool for your <br /> whole team needs
-        </h1>
-        <p className="text-gray-600 text-sm sm:text-base mb-8">
-          We are lorem ipsum team dolor sit amet, consectetur adipiscing elit,
-          sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-        </p>
+        <input
+          placeholder="Password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300 text-sm md:text-base"
+          required
+        />
 
-        <div className="flex items-center gap-2">
-          <div className="flex -space-x-2">
-            <div className="w-10 h-10 bg-purple-400 rounded-full border-2 border-white"></div>
-            <div className="w-10 h-10 bg-blue-400 rounded-full border-2 border-white"></div>
-            <div className="w-10 h-10 bg-green-400 rounded-full border-2 border-white"></div>
-          </div>
-          <span className="text-gray-700 font-medium text-sm sm:text-base">
-            3k+ people joined us, now it's your turn
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <button
+            type="button"
+            onClick={() => setAuthStep("forgot")}
+            className="text-sm text-gray-600 hover:underline transition-all duration-300 text-left"
+          >
+            Forgot password?
+          </button>
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="bg-gray-800 text-white px-6 py-2 rounded-md font-semibold hover:bg-gray-900 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 w-full sm:w-auto"
+          >
+            {isLoading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                Processing...
+              </>
+            ) : (
+              "Sign In"
+            )}
+          </button>
+        </div>
+
+        <div className="text-center mt-2 md:mt-4">
+          <p className="text-gray-600 text-sm">
+            Don't have an account?{" "}
+            <button
+              type="button"
+              onClick={() => setIsLogin(false)}
+              className="text-gray-800 font-semibold hover:underline focus:outline-none cursor-pointer transition-all duration-300"
+            >
+              Sign up
+            </button>
+          </p>
+        </div>
+
+        <div className="relative my-2 md:my-4 text-center">
+          <span className="absolute left-0 top-1/2 w-full h-px bg-gray-300"></span>
+          <span className="relative bg-white/40 px-3 text-gray-600 text-sm">
+            or
           </span>
         </div>
-      </div>
-    </div>
-  );
 
-  const LoginPage = () => (
-    <>
-      <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-6 text-center">
-        Sign in
-      </h2>
-
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <input
-          type="email"
-          name="email"
-          placeholder="Email address"
-          value={formData.email}
-          onChange={handleChange}
-          className="border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-400 outline-none"
-          required
-        />
-
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          className="border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-400 outline-none"
-          required
-        />
-
-        <span
-          onClick={() => setCurrentPage("forgot-password")}
-          className="text-right text-sm text-purple-600 hover:underline cursor-pointer"
-        >
-          Forgot password?
-        </span>
-
-        <button
-          type="submit"
-          className="mt-2 bg-gray-800 text-white py-3 rounded-lg hover:bg-gray-900 transition-all font-medium"
-        >
-          Sign In
-        </button>
-      </form>
-
-      <div className="my-5 flex items-center">
-        <div className="flex-1 h-px bg-gray-300"></div>
-        <span className="px-3 text-gray-500 text-sm">or</span>
-        <div className="flex-1 h-px bg-gray-300"></div>
-      </div>
-
-      <div className="flex justify-center gap-4">
-        <button className="flex items-center justify-center gap-2 border border-gray-300 px-4 py-3 rounded-lg bg-white hover:bg-gray-100 transition w-full max-w-[150px]">
-          <FcGoogle size={22} />
-          <span className="text-sm font-medium text-gray-700">Google</span>
-        </button>
-        <button className="flex items-center justify-center gap-2 border border-gray-300 px-4 py-3 rounded-lg bg-white hover:bg-gray-100 transition w-full max-w-[150px]">
-          <FaMicrosoft size={20} color="#0078D4" />
-          <span className="text-sm font-medium text-gray-700">Microsoft</span>
-        </button>
-      </div>
-
-      <p className="text-center text-gray-600 mt-6 text-sm">
-        Don't have an account?{" "}
-        <span
-          onClick={() => setCurrentPage("register")}
-          className="text-purple-700 font-medium cursor-pointer hover:underline"
-        >
-          Register for free
-        </span>
-      </p>
-    </>
-  );
-
-  const RegisterPage = () => (
-    <>
-      <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-6 text-center">
-        Create an account
-      </h2>
-
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <input
-          type="text"
-          name="name"
-          placeholder="Full Name"
-          value={formData.name}
-          onChange={handleChange}
-          className="border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-400 outline-none"
-          required
-        />
-
-        <input
-          type="email"
-          name="email"
-          placeholder="Email address"
-          value={formData.email}
-          onChange={handleChange}
-          className="border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-400 outline-none"
-          required
-        />
-
-        <input
-          type="tel"
-          name="phone"
-          placeholder="Phone Number"
-          value={formData.phone}
-          onChange={handleChange}
-          className="border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-400 outline-none"
-          required
-        />
-
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          className="border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-400 outline-none"
-          required
-        />
-
-        <input
-          type="password"
-          name="confirmPassword"
-          placeholder="Confirm Password"
-          value={formData.confirmPassword}
-          onChange={handleChange}
-          className="border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-400 outline-none"
-          required
-        />
-
-        <button
-          type="submit"
-          className="mt-2 bg-gray-800 text-white py-3 rounded-lg hover:bg-gray-900 transition-all font-medium"
-        >
-          Register
-        </button>
-      </form>
-
-      <div className="my-5 flex items-center">
-        <div className="flex-1 h-px bg-gray-300"></div>
-        <span className="px-3 text-gray-500 text-sm">or</span>
-        <div className="flex-1 h-px bg-gray-300"></div>
-      </div>
-
-      <div className="flex justify-center gap-4">
-        <button className="flex items-center justify-center gap-2 border border-gray-300 px-4 py-3 rounded-lg bg-white hover:bg-gray-100 transition w-full max-w-[150px]">
-          <FcGoogle size={22} />
-          <span className="text-sm font-medium text-gray-700">Google</span>
-        </button>
-        <button className="flex items-center justify-center gap-2 border border-gray-300 px-4 py-3 rounded-lg bg-white hover:bg-gray-100 transition w-full max-w-[150px]">
-          <FaMicrosoft size={20} color="#0078D4" />
-          <span className="text-sm font-medium text-gray-700">Microsoft</span>
-        </button>
-      </div>
-
-      <p className="text-center text-gray-600 mt-6 text-sm">
-        Already have an account?{" "}
-        <span
-          onClick={() => setCurrentPage("login")}
-          className="text-purple-700 font-medium cursor-pointer hover:underline"
-        >
-          Login here
-        </span>
-      </p>
-    </>
-  );
-
-  const ForgotPasswordPage = () => (
-    <>
-      <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 text-center">
-        Forgot Password
-      </h2>
-      <p className="text-gray-600 text-center mb-6">
-        Enter your email to reset your password
-      </p>
-
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <input
-          type="email"
-          name="email"
-          placeholder="Email address"
-          value={formData.email}
-          onChange={handleChange}
-          className="border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-400 outline-none"
-          required
-        />
-
-        <button
-          type="submit"
-          className="mt-2 bg-gray-800 text-white py-3 rounded-lg hover:bg-gray-900 transition-all font-medium"
-        >
-          Send Reset Code
-        </button>
-      </form>
-
-      <p className="text-center text-gray-600 mt-6 text-sm">
-        Remember your password?{" "}
-        <span
-          onClick={() => setCurrentPage("login")}
-          className="text-purple-700 font-medium cursor-pointer hover:underline"
-        >
-          Back to login
-        </span>
-      </p>
-    </>
-  );
-
-  const OTPPage = () => (
-    <>
-      <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 text-center">
-        Verify OTP
-      </h2>
-      <p className="text-gray-600 text-center mb-6">
-        Enter the OTP sent to your email
-      </p>
-
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <div className="flex justify-center gap-2 mb-4">
-          {[1, 2, 3, 4, 5, 6].map((index) => (
-            <input
-              key={index}
-              type="text"
-              maxLength={1}
-              name="otp"
-              className="w-12 h-12 border border-gray-300 rounded-lg text-center text-xl font-semibold focus:ring-2 focus:ring-purple-400 outline-none"
-              onChange={(e) => {
-                const value = e.target.value;
-                if (value) {
-                  const nextInput = e.target.nextElementSibling;
-                  if (nextInput) nextInput.focus();
-                }
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Backspace" && !e.target.value) {
-                  const prevInput = e.target.previousElementSibling;
-                  if (prevInput) prevInput.focus();
-                }
-              }}
-            />
-          ))}
+        <div className="flex flex-col sm:flex-row justify-between gap-3">
+          <button
+            type="button"
+            className="flex items-center justify-center gap-2 w-full border border-gray-300 py-2 rounded-lg hover:bg-gray-100 transition-all duration-300 text-sm md:text-base"
+          >
+            <FcGoogle size={18} className="md:size-[20px]" />
+            <span>Google</span>
+          </button>
+          <button
+            type="button"
+            className="flex items-center justify-center gap-2 w-full border border-gray-300 py-2 rounded-lg hover:bg-gray-100 transition-all duration-300 text-sm md:text-base"
+          >
+            <FaAppleAlt size={16} className="text-[#0078D4] md:size-[18px]" />
+            <span>Apple</span>
+          </button>
         </div>
 
-        <div className="text-center mb-4">
-          {timer > 0 ? (
-            <span className="text-gray-600 text-sm">
-              Resend OTP in <span className="font-semibold">{timer}</span>{" "}
-              seconds
-            </span>
-          ) : (
-            <span
-              onClick={resendOTP}
-              className="text-purple-600 text-sm hover:underline cursor-pointer"
-            >
-              Resend OTP
-            </span>
-          )}
-        </div>
+        <p className="text-xs text-gray-500 text-center mt-4 md:mt-6 leading-5">
+          Protected by reCAPTCHA and subject to the{" "}
+          <a
+            href="#"
+            className="underline text-black hover:text-gray-700 transition-colors"
+          >
+            Privacy Policy
+          </a>{" "}
+          and{" "}
+          <a
+            href="#"
+            className="underline text-black hover:text-gray-700 transition-colors"
+          >
+            Terms of Service
+          </a>
+          .
+        </p>
+      </div>
+    </form>
+  );
 
+  const renderOtpForm = () => (
+    <form onSubmit={handleOtpSubmit} className="space-y-4 md:space-y-6">
+      <div className="flex items-center justify-between mb-2 md:mb-4">
         <button
-          type="submit"
-          className="mt-2 bg-gray-800 text-white py-3 rounded-lg hover:bg-gray-900 transition-all font-medium"
-          disabled={timer === 0}
+          type="button"
+          onClick={handleBack}
+          className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-all duration-300 text-sm md:text-base"
         >
+          <FaArrowLeft size={14} className="md:size-[16px]" />
+          <span className="hidden sm:inline">Back</span>
+        </button>
+        <h1 className="text-xl md:text-3xl font-semibold text-center text-gray-700 flex-1">
+          Enter OTP
+        </h1>
+        <div className="w-6 md:w-8"></div>
+      </div>
+
+      <div className="text-center mb-4 md:mb-6">
+        <p className="text-gray-600 text-sm md:text-base">
+          We sent a verification code to
+        </p>
+        <p className="font-semibold text-gray-800 text-sm md:text-base">
+          {email}
+        </p>
+      </div>
+
+      <div className="flex justify-center gap-2 md:gap-3 mb-4 md:mb-6">
+        {otp.map((data, index) => (
+          <input
+            key={index}
+            type="text"
+            maxLength="1"
+            value={data}
+            onChange={(e) => handleOtpChange(e.target, index)}
+            onFocus={(e) => e.target.select()}
+            className="w-10 h-10 md:w-12 md:h-12 text-center text-lg md:text-xl font-semibold border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300"
+          />
+        ))}
+      </div>
+
+      <button
+        type="submit"
+        disabled={isLoading || otp.some((digit) => digit === "")}
+        className="w-full bg-gray-800 text-white py-3 rounded-xl font-semibold hover:bg-gray-900 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm md:text-base"
+      >
+        {isLoading ? (
+          <>
+            <div className="w-4 h-4 md:w-5 md:h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            Verifying...
+          </>
+        ) : (
+          "Verify OTP"
+        )}
+      </button>
+
+      <div className="text-center">
+        <p className="text-gray-600 text-xs md:text-sm">
+          Didn't receive the code?{" "}
+          <button
+            type="button"
+            className="text-gray-800 font-semibold hover:underline cursor-pointer transition-all duration-300"
+          >
+            Resend
+          </button>
+        </p>
+      </div>
+    </form>
+  );
+
+  const renderForgotPasswordForm = () => (
+    <form onSubmit={handleForgotPassword} className="space-y-4 md:space-y-6">
+      <div className="flex items-center justify-between mb-2 md:mb-4">
+        <button
+          type="button"
+          onClick={handleBack}
+          className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-all duration-300 text-sm md:text-base"
+        >
+          <FaArrowLeft size={14} className="md:size-[16px]" />
+          <span className="hidden sm:inline">Back</span>
+        </button>
+        <h1 className="text-xl md:text-3xl font-semibold text-center text-gray-700 flex-1">
+          Reset Password
+        </h1>
+        <div className="w-6 md:w-8"></div>
+      </div>
+
+      <div className="text-center mb-4 md:mb-6">
+        <p className="text-gray-600 text-sm md:text-base">
+          Enter your email address and we'll send you an OTP to reset your
+          password.
+        </p>
+      </div>
+
+      <input
+        placeholder="Email address"
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        className="w-full p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300 text-sm md:text-base"
+        required
+      />
+
+      <button
+        type="submit"
+        disabled={isLoading}
+        className="w-full bg-gray-800 text-white py-3 rounded-xl font-semibold hover:bg-gray-900 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm md:text-base"
+      >
+        {isLoading ? (
+          <>
+            <div className="w-4 h-4 md:w-5 md:h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            Sending OTP...
+          </>
+        ) : (
+          "Send OTP"
+        )}
+      </button>
+    </form>
+  );
+
+  const renderResetPasswordForm = () => (
+    <form onSubmit={handleOtpSubmit} className="space-y-4 md:space-y-6">
+      <div className="flex items-center justify-between mb-2 md:mb-4">
+        <button
+          type="button"
+          onClick={handleBack}
+          className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-all duration-300 text-sm md:text-base"
+        >
+          <FaArrowLeft size={14} className="md:size-[16px]" />
+          <span className="hidden sm:inline">Back</span>
+        </button>
+        <h1 className="text-xl md:text-3xl font-semibold text-center text-gray-700 flex-1">
           Verify OTP
-        </button>
-      </form>
+        </h1>
+        <div className="w-6 md:w-8"></div>
+      </div>
 
-      <p className="text-center text-gray-600 mt-6 text-sm">
-        <span
-          onClick={() => setCurrentPage("login")}
-          className="text-purple-700 font-medium cursor-pointer hover:underline"
-        >
-          Back to login
-        </span>
-      </p>
-    </>
+      <div className="text-center mb-4 md:mb-6">
+        <p className="text-gray-600 text-sm md:text-base">
+          Enter the OTP sent to your email
+        </p>
+        <p className="font-semibold text-gray-800 text-sm md:text-base">
+          {email}
+        </p>
+      </div>
+
+      <div className="flex justify-center gap-2 md:gap-3 mb-4 md:mb-6">
+        {otp.map((data, index) => (
+          <input
+            key={index}
+            type="text"
+            maxLength="1"
+            value={data}
+            onChange={(e) => handleOtpChange(e.target, index)}
+            onFocus={(e) => e.target.select()}
+            className="w-10 h-10 md:w-12 md:h-12 text-center text-lg md:text-xl font-semibold border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300"
+          />
+        ))}
+      </div>
+
+      <button
+        type="submit"
+        disabled={isLoading || otp.some((digit) => digit === "")}
+        className="w-full bg-gray-800 text-white py-3 rounded-xl font-semibold hover:bg-gray-900 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm md:text-base"
+      >
+        {isLoading ? (
+          <>
+            <div className="w-4 h-4 md:w-5 md:h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            Verifying...
+          </>
+        ) : (
+          "Verify OTP"
+        )}
+      </button>
+
+      <div className="text-center">
+        <p className="text-gray-600 text-xs md:text-sm">
+          Didn't receive the code?{" "}
+          <button
+            type="button"
+            className="text-gray-800 font-semibold hover:underline cursor-pointer transition-all duration-300"
+          >
+            Resend
+          </button>
+        </p>
+      </div>
+    </form>
   );
 
-  const renderRightSection = () => {
-    switch (currentPage) {
-      case "login":
-        return <LoginPage />;
-      case "register":
-        return <RegisterPage />;
-      case "forgot-password":
-        return <ForgotPasswordPage />;
-      case "otp":
-        return <OTPPage />;
-      default:
-        return <LoginPage />;
-    }
-  };
+  const renderNewPasswordForm = () => (
+    <form onSubmit={handlePasswordReset} className="space-y-4 md:space-y-6">
+      <div className="flex items-center justify-between mb-2 md:mb-4">
+        <button
+          type="button"
+          onClick={handleBack}
+          className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-all duration-300 text-sm md:text-base"
+        >
+          <FaArrowLeft size={14} className="md:size-[16px]" />
+          <span className="hidden sm:inline">Back</span>
+        </button>
+        <h1 className="text-xl md:text-3xl font-semibold text-center text-gray-700 flex-1">
+          New Password
+        </h1>
+        <div className="w-6 md:w-8"></div>
+      </div>
+
+      <div className="text-center mb-4 md:mb-6">
+        <p className="text-gray-600 text-sm md:text-base">
+          Create your new password
+        </p>
+      </div>
+
+      {/* Show the email that was entered */}
+      <div className="bg-gray-50 p-3 rounded-xl border border-gray-200">
+        <p className="text-xs md:text-sm text-gray-600">Email</p>
+        <p className="font-semibold text-gray-800 text-sm md:text-base">
+          {email}
+        </p>
+      </div>
+
+      <input
+        placeholder="New Password"
+        type="password"
+        value={newPassword}
+        onChange={(e) => setNewPassword(e.target.value)}
+        className="w-full p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300 text-sm md:text-base"
+        required
+      />
+
+      <input
+        placeholder="Confirm Password"
+        type="password"
+        value={confirmPassword}
+        onChange={(e) => setConfirmPassword(e.target.value)}
+        className="w-full p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300 text-sm md:text-base"
+        required
+      />
+
+      <button
+        type="submit"
+        disabled={isLoading}
+        className="w-full bg-gray-800 text-white py-3 rounded-xl font-semibold hover:bg-gray-900 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm md:text-base"
+      >
+        {isLoading ? (
+          <>
+            <div className="w-4 h-4 md:w-5 md:h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            Resetting...
+          </>
+        ) : (
+          "Reset Password"
+        )}
+      </button>
+    </form>
+  );
+
+  const renderSignupForm = () => (
+    <form className="space-y-4 md:space-y-6">
+      <h1 className="text-2xl md:text-3xl font-semibold pb-2 md:pb-6 text-center text-gray-700">
+        Create account
+      </h1>
+
+      <div className="flex flex-col gap-4 md:gap-6">
+        <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
+          <input
+            placeholder="First Name"
+            type="text"
+            className="p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 flex-1 transition-all duration-300 text-sm md:text-base"
+          />
+          <input
+            placeholder="Last Name"
+            type="text"
+            className="p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 flex-1 transition-all duration-300 text-sm md:text-base"
+          />
+        </div>
+        <input
+          placeholder="Email address"
+          type="email"
+          className="p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300 text-sm md:text-base"
+        />
+        <input
+          placeholder="Password"
+          type="password"
+          className="p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300 text-sm md:text-base"
+        />
+        <input
+          placeholder="Confirm Password"
+          type="password"
+          className="p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300 text-sm md:text-base"
+        />
+
+        <div className="flex items-start">
+          <input
+            type="checkbox"
+            id="terms"
+            className="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded transition-all duration-300 mt-1"
+          />
+          <label htmlFor="terms" className="text-xs md:text-sm text-gray-600">
+            I agree to the{" "}
+            <a
+              href="#"
+              className="underline text-black hover:text-gray-700 transition-colors"
+            >
+              Terms of Service
+            </a>{" "}
+            and{" "}
+            <a
+              href="#"
+              className="underline text-black hover:text-gray-700 transition-colors"
+            >
+              Privacy Policy
+            </a>
+          </label>
+        </div>
+
+        <button
+          type="submit"
+          className="bg-gray-800 text-white px-6 py-3 rounded-xl font-semibold hover:bg-gray-900 transition-all duration-300 text-sm md:text-base"
+        >
+          Create Account
+        </button>
+
+        <div className="text-center mt-1 md:mt-2">
+          <p className="text-gray-600 text-sm">
+            Already have an account?{" "}
+            <button
+              type="button"
+              onClick={() => setIsLogin(true)}
+              className="text-gray-800 font-semibold hover:underline focus:outline-none cursor-pointer transition-all duration-300"
+            >
+              Sign in
+            </button>
+          </p>
+        </div>
+
+        <div className="relative my-2 md:my-4 text-center">
+          <span className="absolute left-0 top-1/2 w-full h-px bg-gray-300"></span>
+          <span className="relative bg-white/40 px-3 text-gray-600 text-sm">
+            or
+          </span>
+        </div>
+
+        <div className="flex flex-col sm:flex-row justify-between gap-3">
+          <button
+            type="button"
+            className="flex items-center justify-center gap-2 w-full border border-gray-300 py-2 rounded-lg hover:bg-gray-100 transition-all duration-300 text-sm md:text-base"
+          >
+            <FcGoogle size={18} className="md:size-[20px]" />
+            <span>Google</span>
+          </button>
+          <button
+            type="button"
+            className="flex items-center justify-center gap-2 w-full border border-gray-300 py-2 rounded-lg hover:bg-gray-100 transition-all duration-300 text-sm md:text-base"
+          >
+            <FaAppleAlt size={16} className="text-[#0078D4] md:size-[18px]" />
+            <span>Apple</span>
+          </button>
+        </div>
+
+        <p className="text-xs text-gray-500 text-center mt-4 md:mt-6 leading-5">
+          Protected by reCAPTCHA and subject to the{" "}
+          <a
+            href="#"
+            className="underline text-black hover:text-gray-700 transition-colors"
+          >
+            Privacy Policy
+          </a>{" "}
+          and{" "}
+          <a
+            href="#"
+            className="underline text-black hover:text-gray-700 transition-colors"
+          >
+            Terms of Service
+          </a>
+          .
+        </p>
+      </div>
+    </form>
+  );
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#E5CFF7] via-[#D3E7FA] to-[#C8F4FD] p-4">
-      <div className="w-full flex flex-col md:flex-row justify-between">
-        {/* LEFT SECTION */}
-        <LeftSection />
+    <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-b from-[#FBB5E7] to-[#C4F9FF] relative overflow-hidden">
+      {/* Logo */}
+      <div className="absolute top-4 left-4 md:top-6 md:left-6 z-20">
+        <Image
+          src="/logo.png"
+          alt="logo"
+          width={80}
+          height={80}
+          className="md:w-[130px] md:h-[120px]"
+        />
+      </div>
 
-        {/* RIGHT SECTION */}
-        <div className="md:w-1/2 bg-white/70 p-10 flex flex-col justify-center rounded-xl transition-all duration-300">
-          {renderRightSection()}
+      {/* Main Section */}
+      <div className="w-full flex flex-col lg:flex-row justify-between items-center px-4 sm:px-8 md:px-16 py-6 md:py-10 gap-8 md:gap-0 md:pt-0 pt-30">
+        {/* Background circular image */}
+        <Image
+          src="/images/roundimage.png"
+          alt="background illustration"
+          width={650}
+          height={650}
+          className="absolute opacity-80 md:opacity-70 md:pt-10 pt-0 rotate-slow rounded-full"
+        />
 
-          <p className="text-center text-xs text-gray-500 mt-8">
-            Protected by reCAPTCHA and subject to the{" "}
-            <span className="underline cursor-pointer">Privacy Policy</span> and{" "}
-            <span className="underline cursor-pointer">Terms of Service</span>.
-          </p>
+        {/* Text content - Hidden on small screens, visible on medium and above */}
+        <div className="relative z-10 px-4 lg:px-6 text-center md:text-left w-full lg:w-auto md:h-auto h-[60vh]">
+          <div className="lg:block pt-20">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#636363] mb-3 lg:mb-4">
+              One tool for your
+            </h1>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#636363] mb-4 lg:mb-6">
+              whole team needs
+            </h1>
+
+            <p className="text-gray-600 text-base sm:text-lg max-w-xl mx-auto lg:mx-0 mb-4 lg:mb-6">
+              We are lorem ipsum team dolor sit amet, consectetur adipiscing
+              elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+              aliqua.
+            </p>
+
+            {/* Avatars + text */}
+            <div className="flex flex-col sm:flex-row justify-center lg:justify-start items-center space-y-3 sm:space-y-0 sm:space-x-3 mt-4">
+              <div className="flex -space-x-3">
+                <Image
+                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjSoKn8IQb33N82TB_LkwVNhgHmlqTuZTcWA&s"
+                  alt="user1"
+                  width={32}
+                  height={32}
+                  className="rounded-full border-2 border-white transition-all duration-300 hover:scale-110 w-8 h-8 sm:w-10 sm:h-10"
+                />
+                <Image
+                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjSoKn8IQb33N82TB_LkwVNhgHmlqTuZTcWA&s"
+                  alt="user2"
+                  width={32}
+                  height={32}
+                  className="rounded-full border-2 border-white transition-all duration-300 hover:scale-110 w-8 h-8 sm:w-10 sm:h-10"
+                />
+                <Image
+                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjSoKn8IQb33N82TB_LkwVNhgHmlqTuZTcWA&s"
+                  alt="user3"
+                  width={32}
+                  height={32}
+                  className="rounded-full border-2 border-white transition-all duration-300 hover:scale-110 w-8 h-8 sm:w-10 sm:h-10"
+                />
+              </div>
+              <span className="text-gray-700 text-xs sm:text-sm font-medium">
+                3k+ people joined us, now it's your turn
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Form Section */}
+        <div className="w-full max-w-md lg:max-w-none lg:w-auto">
+          <div className="bg-white/40 backdrop-blur-md p-6 sm:p-8 md:p-10 md:px-14 rounded-2xl md:rounded-3xl shadow-2xl w-full lg:w-[550px] h-auto max-h-[90vh] overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+            {isLogin ? (
+              <>
+                {authStep === "login" && renderLoginForm()}
+                {authStep === "otp" && renderOtpForm()}
+                {authStep === "forgot" && renderForgotPasswordForm()}
+                {authStep === "reset" && renderResetPasswordForm()}
+                {authStep === "newPassword" && renderNewPasswordForm()}
+              </>
+            ) : (
+              renderSignupForm()
+            )}
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default AuthFlow;
+export default Login;
